@@ -276,6 +276,44 @@ https://你的项目名.up.railway.app
 
 > **注意**：部署到云端后，模型切换会影响服务器上的 Claude Code 配置，而非你的本地环境。建议将云端版本作为 UI 展示和管理面板使用。如需完整的本地模型管理功能，请使用命令行工具。
 
+### 在 Render 上配置 API 密钥（推荐方法）
+
+部署到 Render 后，不要在网页界面上直接输入敏感 API 密钥（不安全）。推荐通过 **Render 环境变量** 配置：
+
+1. 打开 https://dashboard.render.com → 点击你的服务
+2. 点 **Environment** 标签页
+3. 点击 **Add Environment Variable**
+4. 添加以下变量（只需要你有密钥的模型）：
+
+| 环境变量名 | 对应模型 | 获取地址 |
+|-----------|---------|---------|
+| `ANTHROPIC_API_KEY` | Claude | https://console.anthropic.com |
+| `DEEPSEEK_API_KEY` | DeepSeek | https://platform.deepseek.com |
+| `GEMINI_API_KEY` | Gemini | https://aistudio.google.com |
+| `QWEN_API_KEY` | Qwen (通义千问) | https://dashscope.aliyun.com |
+| `MOONSHOT_API_KEY` | Kimi | https://kimi.moonshot.cn |
+| `GLM_API_KEY` | GLM (智谱) | https://open.bigmodel.cn |
+
+5. 点击 **Save Changes**
+6. 然后 **Manual Deploy** → **Deploy latest commit**
+
+服务器会自动读取这些环境变量填充到各模型的 API 密钥中，无需手动输入。
+
+### 通过 Web UI 迁移配置（从本地到云端）
+
+如果本地已经配置好所有模型，可以通过导出/导入功能迁移到云端：
+
+1. **在本地** (http://localhost:3000):
+   - 点击顶部的 **「配置管理」** 按钮
+   - 点击 **「复制配置」** 导出设置
+
+2. **在云端** (https://claude-model-switcher.onrender.com):
+   - 点击顶部的 **「配置管理」** → 在导入区粘贴
+   - 点击 **「导入配置」**
+   - 然后点击 **「API密钥」** 按钮批量设置各模型的密钥
+
+> ⚠️ 导出配置不会包含 API 密钥本身，密钥需要通过环境变量或手动输入。这保证了密钥安全。
+
 ## API 密钥配置
 
 ### 自动配置（推荐）

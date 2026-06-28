@@ -39,6 +39,17 @@ createApp({
         description: ''
       },
 
+      // 配置导入导出
+      showConfigModal: false,
+      configExportData: '',
+      configImportData: '',
+      configMessage: '',
+      configMessageType: '',
+
+      // 批量API密钥设置
+      showApiKeysModal: false,
+      apiKeysForm: {},
+
       // 设置
       autoTest: true,
       theme: 'default'
@@ -385,6 +396,126 @@ createApp({
         case 'testing': return '测试中';
         case 'error': return '错误';
         default: return '未知';
+      }
+    },
+
+    // 配置导入导出 =====
+
+    // 打开配置管理面板
+    openConfigModal() {
+      this.showConfigModal = true;
+      this.configImportData = '';
+      this.configMessage = '';
+      this.exportConfig();
+    },
+
+    // 导出配置到JSON
+    async exportConfig() {
+      try {
+        const response = await fetch('/api/config/export');
+        const result = await response.json();
+        if (result.success) {
+          this.configExportData = JSON.stringify(result.data, null, 2);
+          this.showConfigMessage('success', '✅ 配置已导出，可复制到云端使用');
+        } else {
+          this.showConfigMessage('error', '导出失败: ' + (result.error || '未知错误'));
+        }
+      } catch (error) {
+        this.showConfigMessage('error', '导出失败: ' + error.message);
+      }
+    },
+
+    // 导入配置
+    async importConfig() {
+      try {
+        let data;
+        try {
+          data = JSON.parse(this.configImportData);
+        } catch {
+          this.showConfigMessage('error', '❌ JSON 格式错误，请检查');
+          return;
+        }
+
+        // 支持两种格式: {config: ..., activeModel: ...} 或直接的配置对象
+        const payload = data.config ? data : { config: data };
+
+        const response = await fetch('/api/config/import', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const result = await response.json();
+
+        if (result.success) {
+          this.showConfigMessage('success', '✅ ' + result.message);
+          this.showConfigModal = false;
+          await this.loadData();
+          this.showMessage('success', '✅ 配置导入成功');
+        } else {
+          this.showConfigMessage('error', '导入失败: ' + (result.error || '未知错误'));
+        }
+      } catch (error) {
+        this.showConfigMessage('error', '导入失败: ' + error.message);
+      }
+    },
+
+    // 复制导出文本到剪贴板
+    copyExportData() {
+      navigator.clipboard.writeText(this.configExportData).then(() => {
+        this.showConfigMessage('success', '✅ 已复制到剪贴板');
+      }).catch(() => {
+        // 降级方案
+        const textarea = document.createElement('textarea');
+        textarea.value = this.configExportData;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+        this.showConfigMessage('success', '✅ 已复制到剪贴板');
+      });
+    },
+
+    showConfigMessage(type, message) {
+      this.configMessageType = type;
+      this.configMessage = message;
+      setTimeout(() => { this.configMessage = ''; }, 5000);
+    },
+
+    // 批量API密钥设置 =====
+
+    openApiKeysModal() {
+      // 为每个模型初始化表单
+      const form = {};
+      Object.keys(this.models).forEach(key => {
+        form[key] = '';
+      });
+      this.apiKeysForm = form;
+      this.showApiKeysModal = true;
+    },
+
+    async saveAllApiKeys() {
+      let saved = 0;
+      for (const [key, apiKey] of Object.entries(this.apiKeysForm)) {
+        if (apiKey && apiKey.trim()) {
+          try {
+            const response = await fetch(`/api/models/${key}`, {
+              method: 'PUT',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ apiKey: apiKey.trim() })
+            });
+            const result = await response.json();
+            if (result.success) saved++;
+          } catch (e) {
+            console.error(`Failed to save API key for ${key}:`, e);
+          }
+        }
+      }
+      this.showApiKeysModal = false;
+      if (saved > 0) {
+        await this.loadData();
+        this.showMessage('success', `✅ 已保存 ${saved} 个模型的 API 密钥`);
+      } else {
+        this.showMessage('error', '⚠️ 没有输入任何 API 密钥');
       }
     },
 

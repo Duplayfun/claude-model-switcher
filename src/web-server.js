@@ -241,6 +241,83 @@ export class WebServer {
       }
     });
 
+    // 导出配置（JSON格式，方便迁移到云端）
+    this.app.get('/api/config/export', async (req, res) => {
+      try {
+        const models = await this.configManager.loadConfig();
+        const active = await this.configManager.getActiveModel();
+
+        // 移除敏感信息中的完整 API Key，提示用户手动填写
+        const exportData = {};
+        Object.keys(models).forEach(key => {
+          exportData[key] = { ...models[key] };
+          if (exportData[key].apiKey) {
+            exportData[key].apiKey = ''; // 不导出密钥，通过环境变量传递
+            exportData[key]._keyHint = `请在目标环境设置 ${exportData[key].apiKeyName || 'ANTHROPIC_API_KEY'} 环境变量`;
+          }
+        });
+
+        res.json({
+          success: true,
+          data: {
+            config: exportData,
+            activeModel: active.model,
+            exportTime: new Date().toISOString(),
+            note: 'API密钥已移除，请通过环境变量配置'
+          }
+        });
+      } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+
+    // 导入配置（从JSON恢复模型设置）
+    this.app.post('/api/config/import', async (req, res) => {
+      try {
+        const { config, activeModel } = req.body;
+
+        if (!config || typeof config !== 'object') {
+          return res.status(400).json({
+            success: false,
+            error: '无效的配置格式，请提供有效的 JSON 配置'
+          });
+        }
+
+        const models = await this.configManager.loadConfig();
+
+        // 合并导入的配置，保留已有 API 密钥
+        Object.keys(config).forEach(key => {
+          if (typeof config[key] === 'object' && config[key] !== null) {
+            if (!models[key]) {
+              models[key] = config[key];
+            } else {
+              // 保留已有 API 密钥，合并其他字段
+              const existingKey = models[key].apiKey;
+              models[key] = { ...models[key], ...config[key] };
+              if (config[key].apiKey === '' && existingKey) {
+                models[key].apiKey = existingKey;
+              }
+            }
+          }
+        });
+
+        await this.configManager.saveConfig(models);
+
+        // 如果指定了激活模型，切换过去
+        if (activeModel && models[activeModel]) {
+          await this.configManager.setActiveModel(activeModel);
+        }
+
+        res.json({
+          success: true,
+          message: `已成功导入 ${Object.keys(config).length} 个模型配置`,
+          data: { models: Object.keys(config) }
+        });
+      } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+      }
+    });
+
     // 获取系统状态
     this.app.get('/api/status', async (req, res) => {
       try {

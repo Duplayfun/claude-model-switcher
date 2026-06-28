@@ -748,6 +748,14 @@
                 >
             </div>
             <div class="action-buttons">
+                <button class="btn btn-secondary" @click="openConfigModal">
+                    <span>📋</span>
+                    配置管理
+                </button>
+                <button class="btn btn-secondary" @click="openApiKeysModal">
+                    <span>🔑</span>
+                    API密钥
+                </button>
                 <button class="btn btn-secondary" @click="showAddModel = true">
                     <span>➕</span>
                     添加模型
@@ -943,6 +951,107 @@
     </div>
 
     </div>
+
+    <!-- 配置导入导出模态框 -->
+    <div v-if="showConfigModal" class="modal" :class="{ show: showConfigModal }" @click="showConfigModal = false">
+        <div class="modal-content" @click.stop style="max-width: 700px;">
+            <div class="modal-header">
+                <h2 class="modal-title">📋 配置管理</h2>
+                <p style="color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
+                    将本地的模型配置迁移到云端，或从云端导出
+                </p>
+            </div>
+
+            <div v-if="configMessage" class="message" :class="configMessageType === 'success' ? 'message-success' : 'message-error'">
+                {{ configMessage }}
+            </div>
+
+            <!-- 导出区 -->
+            <div class="form-group">
+                <label class="form-label">📤 导出配置（从本地复制到云端）</label>
+                <textarea
+                    class="form-input form-textarea"
+                    readonly
+                    :value="configExportData"
+                    style="min-height: 200px; font-family: monospace; font-size: 13px;"
+                ></textarea>
+                <div style="margin-top: 8px;">
+                    <small style="color: var(--text-secondary);">
+                        ⚠️ API 密钥已移除，请通过下方「批量设置API密钥」功能或环境变量配置
+                    </small>
+                </div>
+                <button class="btn btn-primary btn-small" style="margin-top: 8px;" @click="copyExportData">
+                    <span>📋</span>
+                    复制配置
+                </button>
+            </div>
+
+            <hr style="border: none; border-top: 1px solid var(--apple-gray-5); margin: 16px 0;">
+
+            <!-- 导入区 -->
+            <div class="form-group">
+                <label class="form-label">📥 导入配置（粘贴云端配置到本地）</label>
+                <textarea
+                    v-model="configImportData"
+                    class="form-input form-textarea"
+                    placeholder='在此粘贴从其他实例导出的 JSON 配置...'
+                    style="min-height: 150px; font-family: monospace; font-size: 13px;"
+                ></textarea>
+                <div class="model-actions" style="margin-top: 8px;">
+                    <button class="btn btn-success btn-small" @click="importConfig">
+                        <span>📥</span>
+                        导入配置
+                    </button>
+                    <button class="btn btn-secondary btn-small" @click="showConfigModal = false">
+                        关闭
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量API密钥设置模态框 -->
+    <div v-if="showApiKeysModal" class="modal" :class="{ show: showApiKeysModal }" @click="showApiKeysModal = false">
+        <div class="modal-content" @click.stop>
+            <div class="modal-header">
+                <h2 class="modal-title">🔑 批量设置 API 密钥</h2>
+                <p style="color: var(--text-secondary); font-size: 14px; margin-top: 8px;">
+                    在这里输入各模型的 API 密钥。留空则不修改。
+                </p>
+            </div>
+
+            <form @submit.prevent="saveAllApiKeys">
+                <div v-for="(model, key) in models" :key="key" class="form-group">
+                    <label class="form-label">
+                        {{ model.name }}
+                        <span style="color: var(--text-tertiary); font-size: 12px;">
+                            ({{ key }})
+                            <span v-if="model.apiKey" style="color: var(--apple-green);">✅ 已配置</span>
+                            <span v-else style="color: var(--apple-red);">❌ 未配置</span>
+                        </span>
+                    </label>
+                    <input
+                        v-model="apiKeysForm[key]"
+                        type="password"
+                        class="form-input"
+                        :placeholder="model.apiKey ? '输入新密钥覆盖现有值' : '请输入 ' + (model.apiKeyName || 'API 密钥')"
+                    >
+                </div>
+
+                <div class="model-actions">
+                    <button type="submit" class="btn btn-primary btn-small">
+                        <span>💾</span>
+                        保存所有密钥
+                    </button>
+                    <button type="button" class="btn btn-secondary btn-small" @click="showApiKeysModal = false">
+                        取消
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    </div> <!-- end #app -->
 
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.js"></script>
     <script src="app.js"></script>

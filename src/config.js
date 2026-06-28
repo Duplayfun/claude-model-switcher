@@ -83,6 +83,9 @@ export class ModelConfig {
   async loadConfig() {
     try {
       await this.ensureConfigDir();
+      let mergedConfig = { ...this.models };
+
+      // Try to load saved config file
       if (await fs.pathExists(this.configFile)) {
         const config = await fs.readJson(this.configFile);
 
@@ -90,7 +93,6 @@ export class ModelConfig {
         const migratedConfig = this.migrateConfig(config);
 
         // Merge with default models, preserving user data
-        const mergedConfig = { ...this.models };
         Object.keys(migratedConfig).forEach(key => {
           if (mergedConfig[key]) {
             mergedConfig[key] = { ...mergedConfig[key], ...migratedConfig[key] };
@@ -98,10 +100,26 @@ export class ModelConfig {
             mergedConfig[key] = migratedConfig[key];
           }
         });
-
-        return mergedConfig;
       }
-      return this.models;
+
+      // Auto-populate API keys from environment variables (cloud deployment support)
+      // If no API key is set in config but an env var exists, use it
+      Object.keys(mergedConfig).forEach(key => {
+        const model = mergedConfig[key];
+        if (model.apiKeyName && process.env[model.apiKeyName]) {
+          if (!model.apiKey || model.apiKey === '') {
+            model.apiKey = process.env[model.apiKeyName];
+            console.log(`🔑 Loaded ${model.apiKeyName} from environment variable for ${key}`);
+          }
+        }
+        // Also check ANTHROPIC_API_KEY as universal fallback
+        if ((!model.apiKey || model.apiKey === '') && process.env.ANTHROPIC_API_KEY) {
+          model.apiKey = process.env.ANTHROPIC_API_KEY;
+          console.log(`🔑 Loaded ANTHROPIC_API_KEY from environment variable for ${key}`);
+        }
+      });
+
+      return mergedConfig;
     } catch (error) {
       console.error('Error loading config:', error);
       return this.models;
