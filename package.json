@@ -8,10 +8,10 @@
     "claude-switcher": "src/cli.js"
   },
   "scripts": {
-    "start": "node src/index.js",
+    "start": "node web-start.js",
     "cli": "node src/cli.js",
+    "cli:index": "node src/index.js",
     "web": "node web-start.js",
-    "start:web": "node web-start.js",
     "start:production": "NODE_ENV=production node web-start.js",
     "install-global": "npm install -g ."
   },
