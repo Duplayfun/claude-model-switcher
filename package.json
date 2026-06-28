@@ -11,18 +11,34 @@
     "start": "node src/index.js",
     "cli": "node src/cli.js",
     "web": "node web-start.js",
+    "start:web": "node web-start.js",
+    "start:production": "NODE_ENV=production node web-start.js",
     "install-global": "npm install -g ."
   },
   "dependencies": {
-    "commander": "^11.1.0",
-    "inquirer": "^9.2.12",
     "chalk": "^5.3.0",
-    "fs-extra": "^11.1.1",
-    "node-fetch": "^3.3.2",
+    "commander": "^11.1.0",
+    "cors": "^2.8.5",
+    "docx": "^9.7.1",
     "express": "^4.18.2",
-    "cors": "^2.8.5"
+    "fs-extra": "^11.1.1",
+    "inquirer": "^9.2.12",
+    "node-fetch": "^3.3.2"
   },
-  "keywords": ["ai", "api", "claude", "gemini", "ollama", "deepseek", "qwen", "kimi", "glm"],
+  "keywords": [
+    "ai",
+    "api",
+    "claude",
+    "gemini",
+    "ollama",
+    "deepseek",
+    "qwen",
+    "kimi",
+    "glm"
+  ],
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "author": "Claude Code User",
   "license": "MIT"
 }

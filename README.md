@@ -178,6 +178,104 @@ claude.bat ui
 - **本地访问**: http://localhost:3000
 - **局域网访问**: http://你的IP:3000 （需配置防火墙）
 
+## 🌐 部署到云端（免费）
+
+将本项目的 Web 界面部署到云端，无需本地运行，随时随地通过公网访问。
+
+### 方式一：部署到 Render（推荐，免费）
+
+[Render](https://render.com) 提供免费 Node.js 托管，支持从 GitHub 自动部署。
+
+#### 部署步骤
+
+**方法 A：一键部署（推荐）**
+
+[![Deploy to Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/TERRYdu201/claude-model-switcher)
+
+点击上方按钮 → 登录 Render → 自动识别配置 → 点击 "Apply" → 等待 2-3 分钟部署完成。
+
+**方法 B：手动部署**
+
+1. **将代码推送到 GitHub**
+   ```bash
+   git add .
+   git commit -m "Add deployment config"
+   git push origin main
+   ```
+
+2. **登录 Render** → https://dashboard.render.com
+
+3. **创建 Web Service**
+   - 点击 **"New +"** → **"Web Service"**
+   - 连接你的 GitHub 仓库
+   - Render 会自动检测到项目设置
+
+4. **配置服务**
+   | 配置项 | 填写内容 |
+   |-------|---------|
+   | **Name** | `claude-ai-model-hub`（任意） |
+   | **Region** | `Singapore`（亚洲，访问最快） |
+   | **Branch** | `main` |
+   | **Runtime** | `Node` |
+   | **Build Command** | `npm install` |
+   | **Start Command** | `npm run start:web` |
+   | **Plan** | **Free** ✅ |
+
+5. **点击 "Create Web Service"**
+
+6. **等待部署完成**（约 2-3 分钟），部署成功后你会看到：
+   ```
+   Your service is live 🎉
+   https://claude-ai-model-hub.onrender.com
+   ```
+
+#### 访问地址
+
+部署完成后，你的 Web UI 就会在以下地址永久运行：
+```
+https://claude-ai-model-hub.onrender.com
+```
+
+> ⚠️ Render 免费计划说明：
+> - 服务在 15 分钟无访问后会进入睡眠（冷启动约 30 秒）
+> - 每月 750 小时免费运行时间（足够个人使用）
+> - 支持自定义域名（需付费）
+
+### 方式二：部署到 Railway（备用选择）
+
+[Railway](https://railway.app) 也是优秀的 Node.js 部署平台。
+
+1. **登录 Railway** → 点击 **"New Project"**
+2. 选择 **"Deploy from GitHub repo"**
+3. **连接你的仓库**
+4. 在 **Settings** 中设置：
+   - **Start Command**: `npm run start:web`
+5. 在 **Variables** 中添加：
+   - `NODE_ENV` = `production`
+6. Railway 会自动检测并部署
+
+#### 访问地址
+
+```
+https://你的项目名.up.railway.app
+```
+
+> Railway 免费计划每月提供 $5 额度，足以运行本项目。
+
+### 部署后功能说明
+
+云端部署的 Web UI 保持完整功能：
+
+| 功能 | 状态 |
+|------|------|
+| 📱 响应式界面 | ✅ 正常 |
+| 🎯 模型切换 | ✅ 正常（需在服务端配置 API 密钥） |
+| ⚙️ 配置编辑 | ✅ 正常 |
+| 📊 状态监控 | ✅ 正常 |
+| 🌙 深色模式 | ✅ 正常 |
+
+> **注意**：部署到云端后，模型切换会影响服务器上的 Claude Code 配置，而非你的本地环境。建议将云端版本作为 UI 展示和管理面板使用。如需完整的本地模型管理功能，请使用命令行工具。
+
 ## API 密钥配置
 
 ### 自动配置（推荐）

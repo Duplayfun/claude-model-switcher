@@ -1,0 +1,27 @@
+# Render Blueprint — 一键部署 Claude Code AI Model Hub
+# 详见: https://render.com/docs/blueprint-spec
+#
+# 使用方式:
+#   1. 将代码推送到 GitHub
+#   2. 登录 https://dashboard.render.com  →  New  →  Blueprint
+#   3. 连接你的 GitHub 仓库，Render 会自动识别此文件
+#   4. 点击 "Apply" → 自动部署完成 🎉
+
+services:
+  - type: web
+    name: claude-ai-model-hub
+    runtime: node
+    repo: https://github.com/TERRYdu201/claude-model-switcher
+    plan: free
+    region: singapore  # 亚洲地区，访问更快
+    buildCommand: npm install
+    startCommand: npm run start:web
+    healthCheckPath: /api/status
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "3000"
+    # 可选: 添加自定义域名
+    # domains:
+    #   - ai-hub.yourdomain.com
