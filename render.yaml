@@ -11,7 +11,7 @@ services:
   - type: web
     name: claude-ai-model-hub
     runtime: node
-    repo: https://github.com/TERRYdu201/claude-model-switcher
+    repo: https://github.com/Duplayfun/claude-model-switcher
     plan: free
     region: singapore  # 亚洲地区，访问更快
     buildCommand: npm install
