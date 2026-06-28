@@ -516,7 +516,7 @@ export class ModelSwitcher {
     console.log(chalk.cyan('  claude deepseek             ') + chalk.gray('Switch to DeepSeek'));
     console.log(chalk.cyan('  claude qwen                 ') + chalk.gray('Switch to Qwen'));
     console.log(chalk.cyan('  claude kimi                 ') + chalk.gray('Switch to Kimi'));
-    console.log(chalk.cyan('  claude glm                  ') + chalk.gray('Switch to GLM 4.5'));
+    console.log(chalk.cyan('  claude glm                  ') + chalk.gray('Switch to GLM-4.7'));
     console.log(chalk.cyan('  claude ollama               ') + chalk.gray('Switch to Ollama (local)'));
     console.log();
     console.log(chalk.white('Custom models:'));

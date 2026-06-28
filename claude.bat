@@ -117,7 +117,7 @@ echo.
     echo   claude deepseek            Switch to DeepSeek
     echo   claude qwen                Switch to Qwen
     echo   claude kimi                Switch to Kimi
-    echo   claude glm                 Switch to GLM 4.5
+    echo   claude glm                 Switch to GLM-4.7
     echo   claude ollama              Switch to Ollama (local)
     echo.
     echo   claude myapi               Create/switch to custom model "myapi"

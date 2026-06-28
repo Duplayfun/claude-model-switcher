@@ -1,6 +1,6 @@
 # Claude Code AI Model Hub
 
-专为 Claude Code 设计的多模型 AI API 切换器，支持 Claude、Gemini、DeepSeek、Qwen、Kimi、GLM 4.5 和 Ollama 本地模型。
+专为 Claude Code 设计的多模型 AI API 切换器，支持 Claude、Gemini、DeepSeek、Qwen、Kimi、GLM-4.7 和 Ollama 本地模型。
 
 ## 项目特性
 
@@ -76,7 +76,7 @@ claude.bat list      # 查看所有模型
 | DeepSeek | DeepSeek | 云端 API | OpenAI 兼容 |
 | Qwen | 阿里巴巴 | 云端 API | OpenAI 兼容 |
 | Kimi | Moonshot | 云端 API | OpenAI 兼容 |
-| GLM 4.5 | 智谱 AI | 云端 API | OpenAI 兼容 |
+| GLM-4.7 | 智谱 AI | 云端 API | OpenAI 兼容 |
 | Ollama | 本地 | 本地模型 | OpenAI 兼容 |
 
 ### 自定义模型
@@ -98,7 +98,7 @@ claude.bat list      # 查看所有模型
 ./claude deepseek    # 切换到 DeepSeek
 ./claude qwen        # 切换到 Qwen
 ./claude kimi        # 切换到 Kimi
-./claude glm         # 切换到 GLM 4.5
+./claude glm         # 切换到 GLM-4.7
 ./claude ollama      # 切换到 Ollama（本地，无需 API key）
 ```
 
@@ -109,7 +109,7 @@ claude.bat gemini    # 切换到 Gemini
 claude.bat deepseek  # 切换到 DeepSeek
 claude.bat qwen      # 切换到 Qwen
 claude.bat kimi      # 切换到 Kimi
-claude.bat glm       # 切换到 GLM 4.5
+claude.bat glm       # 切换到 GLM-4.7
 claude.bat ollama    # 切换到 Ollama（本地，无需 API key）
 ```
 
@@ -365,7 +365,7 @@ Configuration updated for DeepSeek
 - **DeepSeek**: `https://api.deepseek.com/anthropic`
 - **Qwen**: `https://dashscope.aliyuncs.com/apps/anthropic`
 - **Kimi**: `https://api.moonshot.cn/anthropic`
-- **GLM 4.5**: `https://open.bigmodel.cn/api/anthropic`
+- **GLM-4.7**: `https://open.bigmodel.cn/api/anthropic`
 - **Ollama**: `http://localhost:11434/v1`
 
 ## 工作原理

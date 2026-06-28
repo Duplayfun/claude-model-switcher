@@ -56,12 +56,12 @@ export class ModelConfig {
         modelAlias: null
       },
       glm: {
-        name: 'GLM 4.5 (ZhipuAI)',
+        name: 'GLM-4.7 (ZhipuAI)',
         baseUrl: 'https://open.bigmodel.cn/api/anthropic',
         apiKeyName: 'GLM_API_KEY',
         apiKey: '',
-        defaultModel: 'glm-4.5',
-        recommendedModel: 'glm-4.5',
+        defaultModel: 'glm-4.7',
+        recommendedModel: 'glm-4.7',
         modelAlias: null
       },
       ollama: {
